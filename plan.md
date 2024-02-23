@@ -27,4 +27,3 @@ With the Docker environment set up and working, you can proceed to develop the s
 - **Frontend Development:** Focus on implementing the UI components, integrating with the backend API for CRUD operations, and developing the dashboard for analytics.
 - **Backend Development:** Implement the API endpoints required for user authentication, handling CRUD operations for expenses, and aggregating data for the dashboard.
 
-
