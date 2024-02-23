@@ -1,0 +1,29 @@
+# Use an official Node runtime as a parent image for the build stage
+FROM node:14 as build-stage
+
+# Set the working directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json (if available) to /app
+COPY package*.json /app/
+
+# Install project dependencies
+RUN npm install
+
+# Copy the project files into the docker image
+COPY . /app
+
+# Build the app for production to the build folder
+RUN npm run build
+
+# Use nginx to serve the React app
+FROM nginx:stable-alpine as production-stage
+
+# Copy the build artifacts from the build stage to the nginx folder
+COPY --from=build-stage /app/build /usr/share/nginx/html
+
+# Expose port 80 to the outer world
+EXPOSE 80
+
+# Start nginx and keep the process running
+CMD ["nginx", "-g", "daemon off;"]

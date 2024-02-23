@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev # Specify the development Dockerfile
+    ports:
+      - "3000:3000" # Match the exposed port in the Dockerfile.dev
+    volumes:
+      - ./frontend:/app # Ensure live reloading by mapping the source code
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_BACKEND_URL=http://backend:5000
+    restart: on-failure
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev # Specify the development Dockerfile
+    ports:
+      - "5000:5000"
+    command: npm run dev # Ensure this uses nodemon or a similar tool for live reloading
+    volumes:
+      - ./backend:/usr/src/app # Map the source code for live reloading
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/expensetracker
+      - NODE_ENV=development
+    restart: on-failure
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo-data:/data/db
+    restart: on-failure
+
+volumes:
+  mongo-data:
