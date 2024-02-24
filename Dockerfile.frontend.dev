@@ -1,0 +1,28 @@
+# Use an official Node runtime as a parent image
+FROM node:16
+
+# Set the working directory
+WORKDIR /app/
+
+# Copy package.json and package-lock.json (if available) to /app
+COPY ./frontend/package*.json ./frontend/
+
+# Install project dependencies
+WORKDIR /app/frontend
+RUN npm install
+WORKDIR /app/
+
+# Copy the project files into the docker image
+COPY ./frontend ./frontend
+COPY ./shared ./shared
+
+# Expose the port the app runs on
+EXPOSE 3000
+
+# Build shared module
+WORKDIR /app/shared
+RUN npm run build
+
+# Start the app using npm start, enabling live reloading
+WORKDIR /app/frontend
+CMD ["npm", "start"]

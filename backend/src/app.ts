@@ -1,11 +1,28 @@
 import express, { Request, Response } from 'express';
+import { expressjwt } from 'express-jwt';
+import { getEnvParam } from './utils/getEnvParam';
+import authRoutes from './routes/authRoutes';
+import expensesRoutes from './routes/authRoutes';
 
+const port = getEnvParam('PORT', false) || 5000;
+const jwtSecret: string = getEnvParam('JWT_SECRET', true);
+
+
+// create express app
 const app = express();
-const port = process.env.PORT || 5000;
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('Hello World!');
-});
+// middleware to protect routes
+const auth = expressjwt({ secret: jwtSecret, algorithms: ['HS256'] });
+
+
+// use
+app.use(auth)
+app.use(express.json());
+
+// routes
+app.use("/api/auth", authRoutes)
+app.use("/api/expenses", expensesRoutes)
+
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);

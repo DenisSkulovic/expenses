@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "outDir": "./build",  // Specify the output directory for compiled files
+    "rootDir": "./src",   // Specify the root directory of source files
+    "target": "es5",      // Set the JavaScript version for output files
+    "module": "commonjs", // Use commonjs module system, suitable for Node.js
+    "declaration": true,  // Generate corresponding '.d.ts' file
+    "strict": true        // Enable all strict type-checking options
+  },
+  "include": [
+    "src/**/*.ts"  // Include all TypeScript files in src directory
+  ],
+  "exclude": [
+    "node_modules",  // Exclude the node_modules directory
+    "**/*.test.ts"   // Exclude test files
+  ]
+}

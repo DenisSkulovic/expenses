@@ -1,0 +1,11 @@
+# Use the official MongoDB image
+FROM mongo:latest
+
+# Copy custom configuration file into the container (if you have any)
+# COPY mongodb.conf /etc/mongo/mongodb.conf
+
+# Expose the default MongoDB port
+EXPOSE 27017
+
+# Set the default command to run MongoDB using the custom configuration
+# CMD ["mongod", "--config", "/etc/mongo/mongodb.conf"]

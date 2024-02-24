@@ -1,0 +1,33 @@
+# Use an official Node runtime as a parent image
+FROM node:16
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json
+COPY ./backend/package*.json ./backend/
+
+# Install any needed packages specified in package.json
+WORKDIR /app/backend
+RUN npm install
+WORKDIR /app
+
+# Copy the rest of your application code
+COPY ./backend ./backend
+COPY ./shared ./shared
+
+# Make port 5000 available to the world outside this container
+EXPOSE 5000
+
+# Define environment variable
+ENV NODE_ENV=development
+
+# Build shared module
+WORKDIR /app/shared
+RUN npm run build
+
+# Run the compiled app
+WORKDIR /app/backend
+CMD ["npm", "dev"]
+
+

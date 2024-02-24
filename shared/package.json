@@ -1,0 +1,12 @@
+{
+  "name": "shared-dtos",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "types": "build/index.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^4.0.0"
+  }
+}
