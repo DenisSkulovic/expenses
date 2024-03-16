@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
+import { User } from '../model/User';
 
 export const refreshTokenSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
-        ref: 'User' // Assuming you have a User model
+        ref: User
     },
     token: {
         type: String,
@@ -17,7 +18,7 @@ export const refreshTokenSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now,
-        index: { expires: '7d' } // Automatically delete the document after 7 days
+        index: { expires: '7d' }
     },
     isValid: {
         type: Boolean,

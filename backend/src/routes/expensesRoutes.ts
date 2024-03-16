@@ -1,98 +1,21 @@
-import { Router, Request, Response } from 'express';
-import { ExpenseService } from '../service/ExpenseService';
+import { Router } from 'express';
 import { validateRefreshTokenMiddleware } from '../middleware/validateRefreshTokenMiddleware';
+import { handleCreate, handleDelete, handleFind, handleGet, handleUpdate } from '../handlers/expenseHandlers';
 
 const router = Router();
 
-router.post('/create', validateRefreshTokenMiddleware, async (req: Request, res: Response) => {
-    let response = { statusCode: 200, body: {} };
-    try {
-        const expenseData = req.body;
-        const userId: string | undefined = req.userId
-        if (!userId) throw new Error("cannot proceed without userId")
-        const isSuccess = await ExpenseService.createExpense(userId, expenseData);
-        if (isSuccess) {
-            response.body = { message: 'Expense created successfully' };
-        } else {
-            response.statusCode = 400;
-            response.body = { error: 'Error creating expense' };
-        }
-    } catch (err) {
-        console.error(err);
-        response.statusCode = 500;
-        response.body = { error: 'Internal server error' };
-    }
-    res.status(response.statusCode).json(response.body);
-});
+export enum ExpenseRoutes {
+    CREATE = '/create',
+    UPDATE = '/update/:expenseId',
+    DELETE = '/delete/:expenseId',
+    GET = '/get/:expenseId',
+    FIND = '/find'
+}
 
-router.put('/update/:expenseId', validateRefreshTokenMiddleware, async (req: Request, res: Response) => {
-    let response = { statusCode: 200, body: {} };
-    try {
-        const { expenseId } = req.params;
-        const expenseData = req.body;
-        const userId: string | undefined = req.userId
-        if (!userId) throw new Error("cannot proceed without userId")
-        await ExpenseService.updateExpense(userId, expenseId, expenseData);
-        response.body = { message: 'Expense updated successfully' };
-    } catch (err) {
-        console.error(err);
-        response.statusCode = 500;
-        response.body = { error: 'Internal server error' };
-    }
-    res.status(response.statusCode).json(response.body);
-});
+router.post(ExpenseRoutes.CREATE, validateRefreshTokenMiddleware, handleCreate);
+router.put(ExpenseRoutes.UPDATE, validateRefreshTokenMiddleware, handleUpdate);
+router.delete(ExpenseRoutes.DELETE, validateRefreshTokenMiddleware, handleDelete);
+router.get(ExpenseRoutes.GET, validateRefreshTokenMiddleware, handleGet);
+router.get(ExpenseRoutes.FIND, validateRefreshTokenMiddleware, handleFind);
 
-router.delete('/delete/:expenseId', validateRefreshTokenMiddleware, async (req: Request, res: Response) => {
-    let response = { statusCode: 200, body: {} };
-    try {
-        const { expenseId } = req.params;
-        const userId: string | undefined = req.userId
-        if (!userId) throw new Error("cannot proceed without userId")
-        await ExpenseService.deleteExpense(userId, expenseId);
-        response.body = { message: 'Expense deleted successfully' };
-    } catch (err) {
-        console.error(err);
-        response.statusCode = 500;
-        response.body = { error: 'Internal server error' };
-    }
-    res.status(response.statusCode).json(response.body);
-});
-
-router.get('/get/:expenseId', validateRefreshTokenMiddleware, async (req: Request, res: Response) => {
-    let response = { statusCode: 200, body: {} };
-    try {
-        const { expenseId } = req.params;
-        const userId: string | undefined = req.userId
-        if (!userId) throw new Error("cannot proceed without userId")
-        const expense = await ExpenseService.getExpenseById(userId, expenseId);
-        if (expense) {
-            response.body = { expense };
-        } else {
-            response.statusCode = 404;
-            response.body = { error: 'Expense not found' };
-        }
-    } catch (err) {
-        console.error(err);
-        response.statusCode = 500;
-        response.body = { error: 'Internal server error' };
-    }
-    res.status(response.statusCode).json(response.body);
-});
-
-router.get('/find', validateRefreshTokenMiddleware, async (req: Request, res: Response) => {
-    let response = { statusCode: 200, body: {} };
-    try {
-        const userId: string | undefined = req.userId
-        if (!userId) throw new Error("cannot proceed without userId")
-        const query = req.query;
-        const page = parseInt(req.query.page as string) || 1;
-        const limit = parseInt(req.query.limit as string) || 10;
-        const expenses = await ExpenseService.findExpenses(userId, query, page, limit);
-        response.body = { expenses };
-    } catch (err) {
-        console.error(err);
-        response.statusCode = 500;
-        response.body = { error: 'Internal server error' };
-    }
-    res.status(response.statusCode).json(response.body);
-});
+export default router
